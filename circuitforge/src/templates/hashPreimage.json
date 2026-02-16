@@ -1,0 +1,44 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "cairo_assert_equal",
+        "id": "hash_preimage_assert_equal",
+        "x": 250,
+        "y": 50,
+        "inputs": {
+          "LEFT": {
+            "block": {
+              "type": "cairo_poseidon_hash",
+              "id": "hash_preimage_poseidon_hash",
+              "inputs": {
+                "VALUE1": {
+                  "block": {
+                    "type": "cairo_private_input",
+                    "id": "hash_preimage_secret_input",
+                    "fields": { "NAME": "secret", "TYPE": "felt252" }
+                  }
+                },
+                "VALUE2": {
+                  "block": {
+                    "type": "cairo_constant",
+                    "id": "hash_preimage_zero_constant",
+                    "fields": { "VALUE": "0" }
+                  }
+                }
+              }
+            }
+          },
+          "RIGHT": {
+            "block": {
+              "type": "cairo_public_input",
+              "id": "hash_preimage_expected_hash_input",
+              "fields": { "NAME": "expected_hash", "TYPE": "felt252" }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

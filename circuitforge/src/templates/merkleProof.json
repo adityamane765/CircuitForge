@@ -1,0 +1,59 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "cairo_assert_equal",
+        "id": "merkle_assert_equal",
+        "x": 250,
+        "y": 50,
+        "inputs": {
+          "LEFT": {
+            "block": {
+              "type": "cairo_poseidon_hash",
+              "id": "merkle_hash_level1",
+              "inputs": {
+                "VALUE1": {
+                  "block": {
+                    "type": "cairo_poseidon_hash",
+                    "id": "merkle_hash_level0",
+                    "inputs": {
+                      "VALUE1": {
+                        "block": {
+                          "type": "cairo_private_input",
+                          "id": "merkle_leaf_input",
+                          "fields": { "NAME": "leaf", "TYPE": "felt252" }
+                        }
+                      },
+                      "VALUE2": {
+                        "block": {
+                          "type": "cairo_private_input",
+                          "id": "merkle_sibling_0_input",
+                          "fields": { "NAME": "sibling_0", "TYPE": "felt252" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "VALUE2": {
+                  "block": {
+                    "type": "cairo_private_input",
+                    "id": "merkle_sibling_1_input",
+                    "fields": { "NAME": "sibling_1", "TYPE": "felt252" }
+                  }
+                }
+              }
+            }
+          },
+          "RIGHT": {
+            "block": {
+              "type": "cairo_public_input",
+              "id": "merkle_root_input",
+              "fields": { "NAME": "merkle_root", "TYPE": "felt252" }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

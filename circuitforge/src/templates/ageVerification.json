@@ -1,0 +1,89 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "cairo_assert_equal",
+        "id": "age_verify_assert_equal",
+        "x": 250,
+        "y": 50,
+        "inputs": {
+          "LEFT": {
+            "block": {
+              "type": "cairo_poseidon_hash",
+              "id": "age_verify_poseidon_hash",
+              "inputs": {
+                "VALUE1": {
+                  "block": {
+                    "type": "cairo_private_input",
+                    "id": "age_verify_age_input_hash",
+                    "fields": { "NAME": "age", "TYPE": "felt252" }
+                  }
+                },
+                "VALUE2": {
+                  "block": {
+                    "type": "cairo_constant",
+                    "id": "age_verify_zero_constant_hash",
+                    "fields": { "VALUE": "0" }
+                  }
+                }
+              }
+            }
+          },
+          "RIGHT": {
+            "block": {
+              "type": "cairo_public_input",
+              "id": "age_verify_age_commitment_input",
+              "fields": { "NAME": "age_commitment", "TYPE": "felt252" }
+            }
+          }
+        },
+        "next": {
+          "block": {
+            "type": "cairo_assert_range",
+            "id": "age_verify_assert_range",
+            "inputs": {
+              "VALUE": {
+                "block": {
+                  "type": "cairo_private_input",
+                  "id": "age_verify_age_input_range",
+                  "fields": { "NAME": "age", "TYPE": "felt252" }
+                }
+              },
+              "MIN": {
+                "block": {
+                  "type": "cairo_public_input",
+                  "id": "age_verify_min_age_input",
+                  "fields": { "NAME": "min_age", "TYPE": "felt252" }
+                }
+              },
+              "MAX": {
+                "block": {
+                  "type": "cairo_constant",
+                  "id": "age_verify_max_age_constant",
+                  "fields": { "VALUE": "150" }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "cairo_public_output",
+                "id": "age_verify_public_output",
+                "inputs": {
+                  "VALUE": {
+                    "block": {
+                      "type": "cairo_constant",
+                      "id": "age_verify_output_constant",
+                      "fields": { "VALUE": "1" }
+                    }
+                  }
+                },
+                "fields": { "NAME": "verified" }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

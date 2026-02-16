@@ -1,0 +1,44 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "cairo_assert_equal",
+        "id": "arithmetic_proof_assert_equal",
+        "x": 250,
+        "y": 50,
+        "inputs": {
+          "LEFT": {
+            "block": {
+              "type": "cairo_mul",
+              "id": "arithmetic_proof_mul",
+              "inputs": {
+                "LEFT": {
+                  "block": {
+                    "type": "cairo_private_input",
+                    "id": "arithmetic_proof_factor_a",
+                    "fields": { "NAME": "factor_a", "TYPE": "felt252" }
+                  }
+                },
+                "RIGHT": {
+                  "block": {
+                    "type": "cairo_private_input",
+                    "id": "arithmetic_proof_factor_b",
+                    "fields": { "NAME": "factor_b", "TYPE": "felt252" }
+                  }
+                }
+              }
+            }
+          },
+          "RIGHT": {
+            "block": {
+              "type": "cairo_public_input",
+              "id": "arithmetic_proof_product",
+              "fields": { "NAME": "product", "TYPE": "felt252" }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
