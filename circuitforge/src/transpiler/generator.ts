@@ -17,7 +17,7 @@ function getVarName(prefix: string, state: GenerationState): string {
 
 function emitExpression(node: ExpressionNode | undefined, state: GenerationState): string {
   if (!node) {
-    return '0';
+    return '/* missing input */';
   }
 
   switch (node.type) {
@@ -74,60 +74,83 @@ export function generateCairo(ast: CircuitAST): string {
     if (statement.type === 'assert_equal') {
       const leftExpr = emitExpression(statement.left, state);
       const rightExpr = emitExpression(statement.right, state);
-      constraintLines.push(`    assert!(${leftExpr} == ${rightExpr}, '${leftExpr} != ${rightExpr}');`);
+      constraintLines.push(`    assert!(${leftExpr} == ${rightExpr}, "${leftExpr} != ${rightExpr}");`);
     } else if (statement.type === 'assert_range') {
       const valueExpr = emitExpression(statement.value, state);
       const minExpr = emitExpression(statement.min, state);
       const maxExpr = emitExpression(statement.max, state);
-      constraintLines.push(`    assert!(${valueExpr} >= ${minExpr}, 'below minimum');`);
-      constraintLines.push(`    assert!(${valueExpr} <= ${maxExpr}, 'above maximum');`);
+      constraintLines.push(`    assert!(${valueExpr} >= ${minExpr}, "below minimum");`);
+      constraintLines.push(`    assert!(${valueExpr} <= ${maxExpr}, "above maximum");`);
     } else if (statement.type === 'assert_not_zero') {
       const valueExpr = emitExpression(statement.value, state);
-      constraintLines.push(`    assert!(${valueExpr} != 0, 'value is zero');`);
+      constraintLines.push(`    assert!(${valueExpr} != 0, "value is zero");`);
     } else if (statement.type === 'public_output') {
       const valueExpr = emitExpression(statement.value, state);
       constraintLines.push(`    // Output: ${statement.name} = ${valueExpr}`);
     }
   });
 
-  // Build final output
+  // Build final output as a Starknet contract
   const lines: string[] = [];
 
-  // Imports
+  // Interface — public inputs become verify() parameters
+  const params = ast.publicInputs
+    .map(input => `${input.name}: ${input.dataType}`)
+    .join(', ');
+
+  lines.push('#[starknet::interface]');
+  lines.push('trait ICircuit<TContractState> {');
+  lines.push(`    fn verify(self: @TContractState${params ? ', ' + params : ''});`);
+  lines.push('}');
+  lines.push('');
+
+  // Contract module
+  lines.push('#[starknet::contract]');
+  lines.push('mod Circuit {');
+
+  // Imports inside the module
   const sortedImports = Array.from(state.imports).sort();
   if (sortedImports.length > 0) {
-    sortedImports.forEach(imp => lines.push(`use ${imp};`));
+    sortedImports.forEach(imp => lines.push(`    use ${imp};`));
     lines.push('');
   }
 
-  // Function signature
-  const params = ast.publicInputs
-    .map(input => `${input.name}: felt252`)
-    .join(', ');
-  lines.push(`fn main(${params}) {`);
+  lines.push('    #[storage]');
+  lines.push('    struct Storage {}');
+  lines.push('');
+  lines.push('    #[abi(embed_v0)]');
+  lines.push('    impl CircuitImpl of super::ICircuit<ContractState> {');
+  lines.push(`        fn verify(self: @ContractState${params ? ', ' + params : ''}) {`);
 
   // Private inputs
   if (ast.privateInputs.length > 0) {
-    lines.push('    // Private inputs');
+    lines.push('            // Private inputs (witness values)');
     ast.privateInputs.forEach(input => {
-      lines.push(`    let ${input.name}: felt252 = 0;`);
+      lines.push(`            let ${input.name}: ${input.dataType} = 0;`);
     });
     lines.push('');
   }
 
-  // Computations (hashes, etc.)
+  // Computations (hashes, etc.) — re-indent for contract body
   if (state.computations.length > 0) {
-    lines.push('    // Computations');
-    state.computations.forEach(comp => lines.push(comp));
+    lines.push('            // Computations');
+    state.computations.forEach(comp => {
+      // Original computations are indented with 4 spaces, replace with 12
+      lines.push(comp.replace(/^    /, '            '));
+    });
     lines.push('');
   }
 
-  // Constraints
+  // Constraints — re-indent for contract body
   if (constraintLines.length > 0) {
-    lines.push('    // Constraints');
-    constraintLines.forEach(line => lines.push(line));
+    lines.push('            // Constraints');
+    constraintLines.forEach(line => {
+      lines.push(line.replace(/^    /, '            '));
+    });
   }
 
+  lines.push('        }');
+  lines.push('    }');
   lines.push('}');
 
   return lines.join('\n');
