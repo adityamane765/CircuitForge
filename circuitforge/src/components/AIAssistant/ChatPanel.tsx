@@ -177,7 +177,7 @@ const ChatPanel: React.FC = () => {
             value={currentApiKeyInput}
             onChange={(e) => setCurrentApiKeyInput(e.target.value)}
             placeholder={`Enter ${provider} API key`}
-            className="flex-grow rounded-md px-3 py-2 text-sm focus:outline-none"
+            className="grow rounded-md px-3 py-2 text-sm focus:outline-none"
             style={{ backgroundColor: theme.btnBg, color: theme.text, border: `1px solid ${theme.border}` }}
           />
           <button
@@ -233,7 +233,7 @@ const ChatPanel: React.FC = () => {
               }
             }}
             placeholder="Type your message..."
-            className="flex-grow rounded-md px-4 py-2 focus:outline-none"
+            className="grow rounded-md px-4 py-2 focus:outline-none"
             style={{ backgroundColor: theme.btnBg, color: theme.text, border: `1px solid ${theme.border}` }}
             disabled={isLoading}
           />
