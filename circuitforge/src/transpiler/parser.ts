@@ -8,9 +8,11 @@ import {
   ConstantNode,
   BinaryOpNode,
   HashNode,
+  UnaryOpNode,
   AssertEqualNode,
   AssertRangeNode,
   AssertNotZeroNode,
+  AssertGreaterThanNode,
   PublicOutputNode,
 } from './types';
 
@@ -55,6 +57,45 @@ function parseExpression(block: Blockly.Block | null): ExpressionNode | undefine
         left: parseExpression(block.getInputTargetBlock('LEFT')),
         right: parseExpression(block.getInputTargetBlock('RIGHT')),
       } as BinaryOpNode;
+    case 'cairo_modulo':
+      return {
+        ...base,
+        type: 'binary_op',
+        operator: 'mod',
+        left: parseExpression(block.getInputTargetBlock('LEFT')),
+        right: parseExpression(block.getInputTargetBlock('RIGHT')),
+      } as BinaryOpNode;
+    case 'cairo_bitwise_and':
+      return {
+        ...base,
+        type: 'binary_op',
+        operator: 'bitwise_and' as BinaryOpNode['operator'],
+        left: parseExpression(block.getInputTargetBlock('LEFT')),
+        right: parseExpression(block.getInputTargetBlock('RIGHT')),
+      } as BinaryOpNode;
+    case 'cairo_bitwise_or':
+      return {
+        ...base,
+        type: 'binary_op',
+        operator: 'bitwise_or' as BinaryOpNode['operator'],
+        left: parseExpression(block.getInputTargetBlock('LEFT')),
+        right: parseExpression(block.getInputTargetBlock('RIGHT')),
+      } as BinaryOpNode;
+    case 'cairo_bitwise_xor':
+      return {
+        ...base,
+        type: 'binary_op',
+        operator: 'bitwise_xor' as BinaryOpNode['operator'],
+        left: parseExpression(block.getInputTargetBlock('LEFT')),
+        right: parseExpression(block.getInputTargetBlock('RIGHT')),
+      } as BinaryOpNode;
+    case 'cairo_bitwise_not':
+      return {
+        ...base,
+        type: 'unary_op',
+        operator: 'bitwise_not',
+        operand: parseExpression(block.getInputTargetBlock('VALUE')),
+      } as UnaryOpNode;
     case 'cairo_poseidon_hash':
       return {
         ...base,
@@ -112,6 +153,13 @@ function parseStatement(block: Blockly.Block | null): StatementNode | undefined 
         type: 'assert_not_zero',
         value: parseExpression(block.getInputTargetBlock('VALUE')),
       } as AssertNotZeroNode;
+    case 'cairo_compare_gt':
+      return {
+        ...base,
+        type: 'assert_gt',
+        left: parseExpression(block.getInputTargetBlock('LEFT')),
+        right: parseExpression(block.getInputTargetBlock('RIGHT')),
+      } as AssertGreaterThanNode;
     case 'cairo_public_output':
       return {
         ...base,
@@ -142,6 +190,8 @@ function collectInputNodes(
     collectInputNodes(node.right, privateInputs, publicInputs);
   } else if (node.type === 'hash') {
     node.inputs.forEach(input => collectInputNodes(input, privateInputs, publicInputs));
+  } else if (node.type === 'unary_op') {
+    collectInputNodes(node.operand, privateInputs, publicInputs);
   }
 }
 
