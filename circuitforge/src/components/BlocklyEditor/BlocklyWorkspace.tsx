@@ -3,8 +3,9 @@
 import React, { useEffect, useRef } from 'react';
 import * as Blockly from 'blockly';
 import { toolbox } from './toolbox';
-import { circuitForgeDarkTheme } from './theme'; // Import the new theme
+import { createBlocklyTheme } from './theme';
 import { registerAllBlocks } from './blocks';
+import { useTheme } from '@/context/ThemeContext';
 
 interface BlocklyWorkspaceProps {
   onWorkspaceChange: (workspace: Blockly.WorkspaceSvg) => void;
@@ -13,15 +14,26 @@ interface BlocklyWorkspaceProps {
 const BlocklyWorkspace: React.FC<BlocklyWorkspaceProps> = ({ onWorkspaceChange }) => {
   const blocklyDiv = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<Blockly.WorkspaceSvg | null>(null);
-  const onChangeRef = useRef(onWorkspaceChange); // Create a ref for the callback
+  const onChangeRef = useRef(onWorkspaceChange);
+  const { theme } = useTheme();
 
   useEffect(() => {
-    onChangeRef.current = onWorkspaceChange; // Update the ref whenever onWorkspaceChange changes
+    onChangeRef.current = onWorkspaceChange;
   }, [onWorkspaceChange]);
+
+  // Create and apply Blockly theme whenever app theme changes
+  useEffect(() => {
+    if (workspaceRef.current) {
+      const blocklyTheme = createBlocklyTheme(theme);
+      workspaceRef.current.setTheme(blocklyTheme);
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (blocklyDiv.current && !workspaceRef.current) {
-      registerAllBlocks(); // Ensure all blocks are registered
+      registerAllBlocks();
+
+      const blocklyTheme = createBlocklyTheme(theme);
 
       const workspace = Blockly.inject(blocklyDiv.current, {
         toolbox: toolbox,
@@ -37,21 +49,26 @@ const BlocklyWorkspace: React.FC<BlocklyWorkspaceProps> = ({ onWorkspaceChange }
         grid: {
           spacing: 20,
           length: 3,
-          colour: '#ccc',
+          colour: theme.blocklyGridColor,
           snap: true,
         },
         trashcan: true,
-        theme: circuitForgeDarkTheme, // Use the imported theme
+        theme: blocklyTheme,
       }) as Blockly.WorkspaceSvg;
 
       workspaceRef.current = workspace;
 
-      workspace.addChangeListener(() => onChangeRef.current(workspace)); // Use the ref here
+      // Tag the toolbox for the onboarding tour
+      const toolboxEl = blocklyDiv.current.querySelector('.blocklyToolboxDiv');
+      if (toolboxEl) {
+        toolboxEl.setAttribute('data-tour', 'toolbox');
+      }
 
-      // Initial resize to fit parent
+      workspace.addChangeListener(() => onChangeRef.current(workspace));
+
       const onResize = () => Blockly.svgResize(workspace);
       window.addEventListener('resize', onResize);
-      onResize(); // Initial call
+      onResize();
 
       return () => {
         window.removeEventListener('resize', onResize);
@@ -59,7 +76,7 @@ const BlocklyWorkspace: React.FC<BlocklyWorkspaceProps> = ({ onWorkspaceChange }
         workspaceRef.current = null;
       };
     }
-  }, []); // Empty dependency array, as onChangeRef will handle the callback updates
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div ref={blocklyDiv} className="h-full w-full">
