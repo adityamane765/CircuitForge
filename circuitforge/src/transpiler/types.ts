@@ -25,7 +25,7 @@ export interface ConstantNode extends BaseNode {
 
 export interface BinaryOpNode extends BaseNode {
   type: 'binary_op';
-  operator: 'add' | 'sub' | 'mul' | 'div';
+  operator: 'add' | 'sub' | 'mul' | 'div' | 'mod' | 'bitwise_and' | 'bitwise_or' | 'bitwise_xor';
   left: ExpressionNode;
   right: ExpressionNode;
 }
@@ -36,12 +36,19 @@ export interface HashNode extends BaseNode {
   inputs: ExpressionNode[];
 }
 
+export interface UnaryOpNode extends BaseNode {
+  type: 'unary_op';
+  operator: 'bitwise_not';
+  operand: ExpressionNode;
+}
+
 export type ExpressionNode =
   | PrivateInputNode
   | PublicInputNode
   | ConstantNode
   | BinaryOpNode
-  | HashNode;
+  | HashNode
+  | UnaryOpNode;
 
 // === Statement Nodes (constraints + outputs) ===
 
@@ -63,6 +70,12 @@ export interface AssertNotZeroNode extends BaseNode {
   value: ExpressionNode;
 }
 
+export interface AssertGreaterThanNode extends BaseNode {
+  type: 'assert_gt';
+  left: ExpressionNode;
+  right: ExpressionNode;
+}
+
 export interface PublicOutputNode extends BaseNode {
   type: 'public_output';
   name: string;
@@ -73,6 +86,7 @@ export type StatementNode =
   | AssertEqualNode
   | AssertRangeNode
   | AssertNotZeroNode
+  | AssertGreaterThanNode
   | PublicOutputNode;
 
 // === Top-level Circuit ===
