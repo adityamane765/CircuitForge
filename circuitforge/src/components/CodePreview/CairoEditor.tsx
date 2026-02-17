@@ -1,13 +1,16 @@
 "use client";
 
-import Editor, { OnMount, BeforeMount } from '@monaco-editor/react';
+import Editor, { BeforeMount } from '@monaco-editor/react';
 import { registerCairoLanguage } from './cairoLanguage';
+import { useTheme } from '@/context/ThemeContext';
 
 interface CairoEditorProps {
   code: string;
 }
 
 export default function CairoEditor({ code }: CairoEditorProps) {
+  const { theme } = useTheme();
+
   const handleBeforeMount: BeforeMount = (monaco) => {
     registerCairoLanguage(monaco);
   };
@@ -16,7 +19,7 @@ export default function CairoEditor({ code }: CairoEditorProps) {
     <Editor
       height="100%"
       language="cairo"
-      theme="vs-dark"
+      theme={theme.monacoTheme}
       value={code}
       beforeMount={handleBeforeMount}
       options={{
