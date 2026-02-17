@@ -4,7 +4,7 @@ export const toolbox = {
     {
       kind: 'category',
       name: 'Inputs',
-      colour: '#9C27B0', // Purple
+      categoryStyle: 'input_category',
       contents: [
         { kind: 'block', type: 'cairo_private_input' },
         { kind: 'block', type: 'cairo_public_input' },
@@ -14,18 +14,19 @@ export const toolbox = {
     {
       kind: 'category',
       name: 'Arithmetic',
-      colour: '#2196F3', // Blue
+      categoryStyle: 'arithmetic_category',
       contents: [
         { kind: 'block', type: 'cairo_add' },
         { kind: 'block', type: 'cairo_sub' },
         { kind: 'block', type: 'cairo_mul' },
         { kind: 'block', type: 'cairo_div' },
+        { kind: 'block', type: 'cairo_modulo' },
       ],
     },
     {
       kind: 'category',
       name: 'Hashing',
-      colour: '#4CAF50', // Green
+      categoryStyle: 'hash_category',
       contents: [
         { kind: 'block', type: 'cairo_poseidon_hash' },
         { kind: 'block', type: 'cairo_pedersen_hash' },
@@ -33,18 +34,30 @@ export const toolbox = {
     },
     {
       kind: 'category',
+      name: 'Logic',
+      categoryStyle: 'logic_category',
+      contents: [
+        { kind: 'block', type: 'cairo_bitwise_and' },
+        { kind: 'block', type: 'cairo_bitwise_or' },
+        { kind: 'block', type: 'cairo_bitwise_xor' },
+        { kind: 'block', type: 'cairo_bitwise_not' },
+      ],
+    },
+    {
+      kind: 'category',
       name: 'Constraints',
-      colour: '#F44336', // Red
+      categoryStyle: 'constraint_category',
       contents: [
         { kind: 'block', type: 'cairo_assert_equal' },
         { kind: 'block', type: 'cairo_assert_range' },
         { kind: 'block', type: 'cairo_assert_not_zero' },
+        { kind: 'block', type: 'cairo_compare_gt' },
       ],
     },
     {
       kind: 'category',
       name: 'Output',
-      colour: '#FF9800', // Orange
+      categoryStyle: 'output_category',
       contents: [
         { kind: 'block', type: 'cairo_public_output' },
       ],
