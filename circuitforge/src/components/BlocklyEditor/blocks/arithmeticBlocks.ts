@@ -1,7 +1,6 @@
 import * as Blockly from 'blockly';
 
-// Common color for Arithmetic blocks
-const ARITHMETIC_BLOCK_COLOR = '#2196F3'; // Blue
+const ARITHMETIC_BLOCK_STYLE = 'arithmetic_blocks';
 
 // cairo_add
 Blockly.Blocks['cairo_add'] = {
@@ -14,7 +13,7 @@ Blockly.Blocks['cairo_add'] = {
         .setCheck('FieldElement');
     this.setInputsInline(true);
     this.setOutput(true, 'FieldElement');
-    this.setColour(ARITHMETIC_BLOCK_COLOR);
+    this.setStyle(ARITHMETIC_BLOCK_STYLE);
     this.setTooltip('Add two field elements');
     this.setHelpUrl('');
   }
@@ -31,7 +30,7 @@ Blockly.Blocks['cairo_sub'] = {
         .setCheck('FieldElement');
     this.setInputsInline(true);
     this.setOutput(true, 'FieldElement');
-    this.setColour(ARITHMETIC_BLOCK_COLOR);
+    this.setStyle(ARITHMETIC_BLOCK_STYLE);
     this.setTooltip('Subtract two field elements');
     this.setHelpUrl('');
   }
@@ -48,7 +47,7 @@ Blockly.Blocks['cairo_mul'] = {
         .setCheck('FieldElement');
     this.setInputsInline(true);
     this.setOutput(true, 'FieldElement');
-    this.setColour(ARITHMETIC_BLOCK_COLOR);
+    this.setStyle(ARITHMETIC_BLOCK_STYLE);
     this.setTooltip('Multiply two field elements');
     this.setHelpUrl('');
   }
@@ -65,8 +64,25 @@ Blockly.Blocks['cairo_div'] = {
         .setCheck('FieldElement');
     this.setInputsInline(true);
     this.setOutput(true, 'FieldElement');
-    this.setColour(ARITHMETIC_BLOCK_COLOR);
+    this.setStyle(ARITHMETIC_BLOCK_STYLE);
     this.setTooltip('Divide two field elements');
+    this.setHelpUrl('');
+  }
+};
+
+// cairo_modulo
+Blockly.Blocks['cairo_modulo'] = {
+  init: function() {
+    this.appendValueInput('LEFT')
+        .setCheck('FieldElement');
+    this.appendDummyInput()
+        .appendField('%');
+    this.appendValueInput('RIGHT')
+        .setCheck('FieldElement');
+    this.setInputsInline(true);
+    this.setOutput(true, 'FieldElement');
+    this.setStyle(ARITHMETIC_BLOCK_STYLE);
+    this.setTooltip('Modulo: remainder of left divided by right');
     this.setHelpUrl('');
   }
 };

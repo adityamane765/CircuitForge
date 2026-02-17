@@ -1,7 +1,7 @@
 import * as Blockly from 'blockly';
 
-// Common color for Input blocks
-const INPUT_BLOCK_COLOR = '#9C27B0'; // Purple
+// Block style name — resolved by the active Blockly theme
+const INPUT_BLOCK_STYLE = 'input_blocks';
 
 // cairo_private_input
 Blockly.Blocks['cairo_private_input'] = {
@@ -16,7 +16,7 @@ Blockly.Blocks['cairo_private_input'] = {
           ['u128', 'u128']
         ]), 'TYPE');
     this.setOutput(true, 'FieldElement');
-    this.setColour(INPUT_BLOCK_COLOR);
+    this.setStyle(INPUT_BLOCK_STYLE);
     this.setTooltip('Private witness input — only known to the prover');
     this.setHelpUrl('');
   }
@@ -35,7 +35,7 @@ Blockly.Blocks['cairo_public_input'] = {
           ['u128', 'u128']
         ]), 'TYPE');
     this.setOutput(true, 'FieldElement');
-    this.setColour(INPUT_BLOCK_COLOR);
+    this.setStyle(INPUT_BLOCK_STYLE);
     this.setTooltip('Public input — known to both prover and verifier');
     this.setHelpUrl('');
   }
@@ -48,7 +48,7 @@ Blockly.Blocks['cairo_constant'] = {
         .appendField('📌 Constant')
         .appendField(new Blockly.FieldNumber(0), 'VALUE');
     this.setOutput(true, 'FieldElement');
-    this.setColour(INPUT_BLOCK_COLOR);
+    this.setStyle(INPUT_BLOCK_STYLE);
     this.setTooltip('A constant field element value');
     this.setHelpUrl('');
   }

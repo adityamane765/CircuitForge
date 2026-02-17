@@ -1,7 +1,6 @@
 import * as Blockly from 'blockly';
 
-// Common color for Hash blocks
-const HASH_BLOCK_COLOR = '#4CAF50'; // Green
+const HASH_BLOCK_STYLE = 'hash_blocks';
 
 // cairo_poseidon_hash
 Blockly.Blocks['cairo_poseidon_hash'] = {
@@ -15,7 +14,7 @@ Blockly.Blocks['cairo_poseidon_hash'] = {
         .setCheck('FieldElement')
         .appendField('value 2');
     this.setOutput(true, 'FieldElement');
-    this.setColour(HASH_BLOCK_COLOR);
+    this.setStyle(HASH_BLOCK_STYLE);
     this.setTooltip('Compute Poseidon hash of two field elements');
     this.setHelpUrl('');
   }
@@ -33,7 +32,7 @@ Blockly.Blocks['cairo_pedersen_hash'] = {
         .setCheck('FieldElement')
         .appendField('value 2');
     this.setOutput(true, 'FieldElement');
-    this.setColour(HASH_BLOCK_COLOR);
+    this.setStyle(HASH_BLOCK_STYLE);
     this.setTooltip('Compute Pedersen hash of two field elements');
     this.setHelpUrl('');
   }

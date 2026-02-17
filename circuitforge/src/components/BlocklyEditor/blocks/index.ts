@@ -5,6 +5,7 @@ import './arithmeticBlocks';
 import './hashBlocks';
 import './constraintBlocks';
 import './outputBlocks';
+import './logicBlocks';
 
 let registered = false;
 

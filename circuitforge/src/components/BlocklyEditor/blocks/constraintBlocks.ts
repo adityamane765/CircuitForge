@@ -1,7 +1,6 @@
 import * as Blockly from 'blockly';
 
-// Common color for Constraint blocks
-const CONSTRAINT_BLOCK_COLOR = '#F44336'; // Red
+const CONSTRAINT_BLOCK_STYLE = 'constraint_blocks';
 
 // cairo_assert_equal
 Blockly.Blocks['cairo_assert_equal'] = {
@@ -16,7 +15,7 @@ Blockly.Blocks['cairo_assert_equal'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(CONSTRAINT_BLOCK_COLOR);
+    this.setStyle(CONSTRAINT_BLOCK_STYLE);
     this.setTooltip('Assert that two field elements are equal');
     this.setHelpUrl('');
   }
@@ -39,7 +38,7 @@ Blockly.Blocks['cairo_assert_range'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(CONSTRAINT_BLOCK_COLOR);
+    this.setStyle(CONSTRAINT_BLOCK_STYLE);
     this.setTooltip('Assert that a value is within a given range (min <= value <= max)');
     this.setHelpUrl('');
   }
@@ -56,8 +55,27 @@ Blockly.Blocks['cairo_assert_not_zero'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(CONSTRAINT_BLOCK_COLOR);
+    this.setStyle(CONSTRAINT_BLOCK_STYLE);
     this.setTooltip('Assert that a field element is not zero');
+    this.setHelpUrl('');
+  }
+};
+
+// cairo_compare_gt
+Blockly.Blocks['cairo_compare_gt'] = {
+  init: function() {
+    this.appendValueInput('LEFT')
+        .setCheck('FieldElement')
+        .appendField('Assert');
+    this.appendDummyInput()
+        .appendField('>');
+    this.appendValueInput('RIGHT')
+        .setCheck('FieldElement');
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setStyle(CONSTRAINT_BLOCK_STYLE);
+    this.setTooltip('Assert that left value is strictly greater than right value');
     this.setHelpUrl('');
   }
 };

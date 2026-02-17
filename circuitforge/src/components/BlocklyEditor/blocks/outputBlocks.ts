@@ -1,7 +1,6 @@
 import * as Blockly from 'blockly';
 
-// Common color for Output block
-const OUTPUT_BLOCK_COLOR = '#FF9800'; // Orange
+const OUTPUT_BLOCK_STYLE = 'output_blocks';
 
 // cairo_public_output
 Blockly.Blocks['cairo_public_output'] = {
@@ -15,7 +14,7 @@ Blockly.Blocks['cairo_public_output'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(OUTPUT_BLOCK_COLOR);
+    this.setStyle(OUTPUT_BLOCK_STYLE);
     this.setTooltip('Defines a public output for the circuit');
     this.setHelpUrl('');
   }
