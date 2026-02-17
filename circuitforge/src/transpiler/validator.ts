@@ -65,7 +65,7 @@ export function validateCircuit(ast: CircuitAST): ValidationError[] {
 
   // 3. Check for no constraints
   const hasConstraints = ast.statements.some(s =>
-    s.type === 'assert_equal' || s.type === 'assert_range' || s.type === 'assert_not_zero'
+    s.type === 'assert_equal' || s.type === 'assert_range' || s.type === 'assert_not_zero' || s.type === 'assert_gt'
   );
   if (!hasConstraints && ast.statements.length > 0) {
     errors.push({
