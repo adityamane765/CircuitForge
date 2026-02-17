@@ -299,7 +299,7 @@ const CircuitEditor: React.FC = () => {
   });
 
   return (
-    <div className="flex h-screen w-full flex-col" style={{ backgroundColor: theme.bg, color: theme.text }}>
+    <div className="flex h-full w-full flex-col" style={{ backgroundColor: theme.bg, color: theme.text }}>
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-2 shadow-md" style={{ backgroundColor: theme.headerBg }}>
         <h1 className="text-xl font-bold" style={{ color: theme.textAccent }}>CircuitForge</h1>

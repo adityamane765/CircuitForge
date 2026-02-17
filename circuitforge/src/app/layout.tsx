@@ -24,21 +24,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function () {
-                const zoom = 0.8;
-                const root = document.documentElement;
-                root.style.zoom = zoom;
-                root.style.height = (100 / zoom) + 'vh';
-                root.style.overflow = 'hidden';
-              })();
-            `,
-          }}
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
