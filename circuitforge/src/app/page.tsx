@@ -1,9 +1,12 @@
+"use client";
+
 import CircuitEditor from '@/components/CircuitEditor';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-4 bg-gray-900 text-white">
+    <ThemeProvider>
       <CircuitEditor />
-    </main>
+    </ThemeProvider>
   );
 }
