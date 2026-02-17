@@ -29,8 +29,24 @@ function emitExpression(node: ExpressionNode | undefined, state: GenerationState
     case 'binary_op': {
       const left = emitExpression(node.left, state);
       const right = emitExpression(node.right, state);
-      const ops = { add: '+', sub: '-', mul: '*', div: '/' };
-      return `(${left} ${ops[node.operator]} ${right})`;
+      if (node.operator === 'bitwise_and') {
+        return `(${left} & ${right})`;
+      }
+      if (node.operator === 'bitwise_or') {
+        return `(${left} | ${right})`;
+      }
+      if (node.operator === 'bitwise_xor') {
+        return `(${left} ^ ${right})`;
+      }
+      const ops = { add: '+', sub: '-', mul: '*', div: '/', mod: '%' };
+      return `(${left} ${ops[node.operator as keyof typeof ops]} ${right})`;
+    }
+    case 'unary_op': {
+      const operand = emitExpression(node.operand, state);
+      if (node.operator === 'bitwise_not') {
+        return `(~${operand})`;
+      }
+      return operand;
     }
     case 'hash': {
       state.imports.add('core::hash::{HashStateExTrait, HashStateTrait}');
@@ -84,6 +100,10 @@ export function generateCairo(ast: CircuitAST): string {
     } else if (statement.type === 'assert_not_zero') {
       const valueExpr = emitExpression(statement.value, state);
       constraintLines.push(`    assert!(${valueExpr} != 0, "value is zero");`);
+    } else if (statement.type === 'assert_gt') {
+      const leftExpr = emitExpression(statement.left, state);
+      const rightExpr = emitExpression(statement.right, state);
+      constraintLines.push(`    assert!(${leftExpr} > ${rightExpr}, "not greater than");`);
     } else if (statement.type === 'public_output') {
       const valueExpr = emitExpression(statement.value, state);
       constraintLines.push(`    // Output: ${statement.name} = ${valueExpr}`);
