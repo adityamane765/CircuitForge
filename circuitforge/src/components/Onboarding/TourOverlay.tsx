@@ -8,6 +8,13 @@ const OVERLAY_Z = 60;
 const TOOLTIP_Z = 61;
 const PADDING = 8; // padding around highlighted element
 
+/** Get the current CSS zoom factor applied to <html> */
+function getZoom(): number {
+  const raw = (document.documentElement.style as any).zoom;
+  const z = parseFloat(raw);
+  return z && z > 0 ? z : 1;
+}
+
 interface TourOverlayProps {
   /** Show the tour when true */
   forceShow?: boolean;
@@ -48,11 +55,12 @@ const TourOverlay: React.FC<TourOverlayProps> = ({ forceShow = false, onComplete
     const el = document.querySelector(`[data-tour="${step.target}"]`);
     if (el) {
       const rect = el.getBoundingClientRect();
+      const z = getZoom();
       setTargetRect({
-        top: rect.top - PADDING,
-        left: rect.left - PADDING,
-        width: rect.width + PADDING * 2,
-        height: rect.height + PADDING * 2,
+        top: rect.top / z - PADDING,
+        left: rect.left / z - PADDING,
+        width: rect.width / z + PADDING * 2,
+        height: rect.height / z + PADDING * 2,
       });
     } else {
       setTargetRect(null);
@@ -67,11 +75,12 @@ const TourOverlay: React.FC<TourOverlayProps> = ({ forceShow = false, onComplete
       const el = document.querySelector(`[data-tour="${step.target}"]`);
       if (el) {
         const rect = el.getBoundingClientRect();
+        const z = getZoom();
         setTargetRect({
-          top: rect.top - PADDING,
-          left: rect.left - PADDING,
-          width: rect.width + PADDING * 2,
-          height: rect.height + PADDING * 2,
+          top: rect.top / z - PADDING,
+          left: rect.left / z - PADDING,
+          width: rect.width / z + PADDING * 2,
+          height: rect.height / z + PADDING * 2,
         });
       }
     };
