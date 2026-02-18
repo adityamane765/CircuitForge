@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type ThemeName = 'midnight' | 'monokai' | 'solarized' | 'light';
+export type ThemeName = 'dark' | 'midnight' | 'monokai' | 'solarized' | 'light';
 
 export interface AppTheme {
   name: ThemeName;
@@ -46,6 +46,38 @@ export interface AppTheme {
 }
 
 const themes: Record<ThemeName, AppTheme> = {
+  dark: {
+    name: 'dark',
+    label: 'Dark',
+    bg: '#0a0a0a',
+    bgSecondary: '#111111',
+    bgTertiary: '#1a1a1a',
+    border: '#222222',
+    text: '#d4d4d4',
+    textMuted: '#666666',
+    textAccent: '#6ab0f3',
+    headerBg: '#0e0e0e',
+    btnBg: '#1a1a1a',
+    btnHover: '#252525',
+    btnText: '#d4d4d4',
+    accent: '#6ab0f3',
+    accentHover: '#8ac4f7',
+    green: '#4ade80',
+    red: '#f87171',
+    yellow: '#facc15',
+    monacoTheme: 'vs-dark',
+    blocklyWorkspaceBg: '#0a0a0a',
+    blocklyToolboxBg: '#111111',
+    blocklyToolboxFg: '#d4d4d4',
+    blocklyFlyoutBg: '#0e0e0e',
+    blocklyGridColor: '#1a1a1a',
+    blockInputColor: '#9580ff',
+    blockArithmeticColor: '#6ab0f3',
+    blockHashColor: '#56d4c0',
+    blockLogicColor: '#e8a87c',
+    blockConstraintColor: '#e06c75',
+    blockOutputColor: '#d4a843',
+  },
   midnight: {
     name: 'midnight',
     label: 'Midnight',
@@ -184,8 +216,8 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: themes.midnight,
-  themeName: 'midnight',
+  theme: themes.dark,
+  themeName: 'dark',
   setTheme: () => {},
   allThemes: [],
 });
@@ -195,7 +227,7 @@ export const useTheme = () => useContext(ThemeContext);
 const STORAGE_KEY = 'circuitforge_theme';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [themeName, setThemeName] = useState<ThemeName>('midnight');
+  const [themeName, setThemeName] = useState<ThemeName>('dark');
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as ThemeName | null;
