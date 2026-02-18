@@ -483,7 +483,6 @@ const LandingPage: React.FC = () => {
             fontFamily: 'var(--font-geist-mono), monospace',
           }}
         >
-          Built with Next.js · Blockly · Cairo · Starknet.js
         </p>
       </footer>
     </div>
