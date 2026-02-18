@@ -1,12 +1,7 @@
 "use client";
 
-import CircuitEditor from '@/components/CircuitEditor';
-import { ThemeProvider } from '@/context/ThemeContext';
+import LandingPage from '@/components/Landing/LandingPage';
 
 export default function Home() {
-  return (
-    <ThemeProvider>
-      <CircuitEditor />
-    </ThemeProvider>
-  );
+  return <LandingPage />;
 }
