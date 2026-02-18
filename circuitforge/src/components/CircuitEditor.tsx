@@ -99,12 +99,14 @@ const CircuitEditor: React.FC = () => {
   }, []);
 
   const handleWorkspaceChange = useCallback((workspace: Blockly.WorkspaceSvg) => {
+    // Update ref immediately so buttons can access it
+    workspaceRef.current = workspace;
+
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
 
     debounceTimeout.current = setTimeout(() => {
-      workspaceRef.current = workspace;
       const currentAst = parseWorkspace(workspace);
       const validationErrors = validateCircuit(currentAst);
       const errorOnly = validationErrors.filter(e => e.severity === 'error');

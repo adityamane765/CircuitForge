@@ -57,6 +57,7 @@ const BlocklyWorkspace: React.FC<BlocklyWorkspaceProps> = ({ onWorkspaceChange }
       }) as Blockly.WorkspaceSvg;
 
       workspaceRef.current = workspace;
+      workspace.markFocused();
 
       // Tag the toolbox for the onboarding tour
       const toolboxEl = blocklyDiv.current.querySelector('.blocklyToolboxDiv');
@@ -65,6 +66,9 @@ const BlocklyWorkspace: React.FC<BlocklyWorkspaceProps> = ({ onWorkspaceChange }
       }
 
       workspace.addChangeListener(() => onChangeRef.current(workspace));
+
+      // Report initial workspace to parent
+      onChangeRef.current(workspace);
 
       const onResize = () => Blockly.svgResize(workspace);
       window.addEventListener('resize', onResize);
