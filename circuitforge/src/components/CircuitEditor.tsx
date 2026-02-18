@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import * as Blockly from 'blockly';
 
 // Transpiler imports
@@ -302,7 +303,7 @@ const CircuitEditor: React.FC = () => {
     <div className="flex h-full w-full flex-col" style={{ backgroundColor: theme.bg, color: theme.text }}>
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-2 shadow-md" style={{ backgroundColor: theme.headerBg }}>
-        <h1 className="text-xl font-bold" style={{ color: theme.textAccent }}>CircuitForge</h1>
+        <Link href="/" className="text-xl font-bold no-underline" style={{ color: theme.textAccent, textDecoration: 'none' }}>CircuitForge</Link>
         <div className="flex items-center space-x-2" data-tour="header-actions">
           <button
             className="px-3 py-1.5 rounded-md text-sm transition-colors"
