@@ -257,7 +257,7 @@ const DeployPanel: React.FC<DeployPanelProps> = ({ cairoCode }) => {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-4 mb-6">
+      <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-4 mb-6">
         <h4 className="text-md font-medium mb-2">Deployment Steps:</h4>
         {steps.map((step) => (
           <div key={step.id} className="flex items-center space-x-3">

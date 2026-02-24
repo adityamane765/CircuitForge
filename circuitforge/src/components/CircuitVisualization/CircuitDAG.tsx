@@ -71,7 +71,7 @@ const CircuitDAG: React.FC<CircuitDAGProps> = ({ ast }) => {
   const nodeMap = new Map(layout.nodes.map(n => [n.id, n]));
 
   return (
-    <div ref={containerRef} className="h-full w-full overflow-auto" style={{ backgroundColor: theme.bg }}>
+    <div ref={containerRef} className="h-full w-full overflow-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ backgroundColor: theme.bg }}>
       <svg
         width={Math.max(containerSize.width, layout.width)}
         height={Math.max(containerSize.height, layout.height)}

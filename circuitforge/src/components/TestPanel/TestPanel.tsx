@@ -214,7 +214,7 @@ const TestPanel: React.FC<TestPanelProps> = ({ ast }) => {
       </button>
 
       <h4 className="mb-2 text-sm font-medium shrink-0">Results:</h4>
-      <div className="flex-1 overflow-y-auto scrollbar-hidden rounded-md border p-3" style={{ borderColor: theme.border, backgroundColor: theme.bg }}>
+      <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-md border p-3" style={{ borderColor: theme.border, backgroundColor: theme.bg }}>
         {testResults === null ? (
           <p className="text-sm" style={{ color: theme.textMuted }}>Enter inputs and run tests to see results.</p>
         ) : testResults.length === 0 ? (

@@ -131,7 +131,7 @@ const MarketplacePanel: React.FC<MarketplacePanelProps> = ({
   };
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-4" style={{ backgroundColor: theme.bgSecondary, color: theme.text }}>
+    <div className="flex h-full flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-4" style={{ backgroundColor: theme.bgSecondary, color: theme.text }}>
       <h3 className="mb-3 text-lg font-semibold">Circuit Marketplace</h3>
 
       <PinataSettings onKeysChange={handleKeysChange} />
