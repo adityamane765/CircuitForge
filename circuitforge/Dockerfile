@@ -23,7 +23,7 @@ RUN /root/.local/bin/scarb --version
 RUN mkdir -p /scarb-warmup/src && \
     printf '[package]\nname = "warmup"\nversion = "0.1.0"\nedition = "2024_07"\n\n[dependencies]\nstarknet = "2.9.2"\n\n[[target.starknet-contract]]\nsierra = true\ncasm = true\n' > /scarb-warmup/Scarb.toml && \
     printf '#[starknet::contract]\nmod warmup {\n    #[storage]\n    struct Storage {}\n}\n' > /scarb-warmup/src/lib.cairo && \
-    /root/.local/bin/scarb build --manifest-path /scarb-warmup/Scarb.toml && \
+    cd /scarb-warmup && /root/.local/bin/scarb build && \
     rm -rf /scarb-warmup
 
 WORKDIR /app
