@@ -27,14 +27,17 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // 1. Upload files as multipart form
-    const form = new FormData();
-    form.append('files', new Blob([SCARB_TOML], { type: 'text/plain' }), 'Scarb.toml');
-    form.append('files', new Blob([cairoCode], { type: 'text/plain' }), 'src/lib.cairo');
-
+    // 1. Submit JSON compilation request
     const submitRes = await fetch(`${REMIX_API}/compile-async`, {
       method: 'POST',
-      body: form,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        files: [
+          { file_name: 'Scarb.toml', file_content: SCARB_TOML },
+          { file_name: 'src/lib.cairo', file_content: cairoCode },
+        ],
+        version: '2.9.2',
+      }),
     });
 
     if (!submitRes.ok) {
@@ -42,7 +45,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, errors: [`Compiler submit failed: ${text}`] }, { status: 400 });
     }
 
-    const { id: processId } = await submitRes.json();
+    const submitData = await submitRes.json();
+    // The API returns the process ID — could be in .id or directly as a string
+    const processId: string = submitData?.id ?? submitData?.data ?? submitData;
 
     // 2. Poll for result (up to 60s)
     for (let i = 0; i < 30; i++) {
@@ -54,8 +59,8 @@ export async function POST(req: NextRequest) {
       const result = await resultRes.json();
 
       if (result.status === 'Success') {
-        // Find sierra and casm in the returned file map
-        const files: { file_name: string; file_content: string }[] = result.file_content ?? [];
+        // Files are in result.data (Vec<FileContentMap>)
+        const files: { file_name: string; file_content: string }[] = result.data ?? [];
         const sierraFile = files.find(f => f.file_name.endsWith('.contract_class.json'));
         const casmFile = files.find(f => f.file_name.endsWith('.compiled_contract_class.json'));
 
