@@ -47,14 +47,14 @@
                 "block": {
                   "type": "cairo_private_input",
                   "id": "age_verify_age_input_range",
-                  "fields": { "NAME": "age", "TYPE": "felt252" }
+                  "fields": { "NAME": "age_range", "TYPE": "u128" }
                 }
               },
               "MIN": {
                 "block": {
                   "type": "cairo_public_input",
                   "id": "age_verify_min_age_input",
-                  "fields": { "NAME": "min_age", "TYPE": "felt252" }
+                  "fields": { "NAME": "min_age", "TYPE": "u128" }
                 }
               },
               "MAX": {

@@ -95,8 +95,10 @@ export function generateCairo(ast: CircuitAST): string {
       const valueExpr = emitExpression(statement.value, state);
       const minExpr = emitExpression(statement.min, state);
       const maxExpr = emitExpression(statement.max, state);
-      constraintLines.push(`    assert!(${valueExpr} >= ${minExpr}, "below minimum");`);
-      constraintLines.push(`    assert!(${valueExpr} <= ${maxExpr}, "above maximum");`);
+      // Use Into trait to coerce felt252 constants; u128/u32 values compare natively
+      const toU128 = (e: string) => /^\d+$/.test(e) ? `${e}_u128` : e;
+      constraintLines.push(`    assert!(${valueExpr} >= ${toU128(minExpr)}, "below minimum");`);
+      constraintLines.push(`    assert!(${valueExpr} <= ${toU128(maxExpr)}, "above maximum");`);
     } else if (statement.type === 'assert_not_zero') {
       const valueExpr = emitExpression(statement.value, state);
       constraintLines.push(`    assert!(${valueExpr} != 0, "value is zero");`);
