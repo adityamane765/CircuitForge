@@ -27,8 +27,10 @@ function findScarb(): string {
   const candidates = [
     'scarb', // system PATH
     join(homedir(), '.local', 'bin', 'scarb'),
+    join(homedir(), '.local', 'share', 'scarb', 'bin', 'scarb'), // Docker/Railway install path
     join(homedir(), '.scarb', 'bin', 'scarb'),
     '/usr/local/bin/scarb',
+    '/root/.local/share/scarb/bin/scarb', // Docker root user
   ];
 
   for (const candidate of candidates) {

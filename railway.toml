@@ -1,0 +1,11 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "circuitforge/Dockerfile"
+buildCommand = ""
+
+[deploy]
+startCommand = ""
+healthcheckPath = "/"
+healthcheckTimeout = 60
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
