@@ -47,8 +47,8 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 # Copy built output from builder
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
+RUN mkdir -p ./public
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
