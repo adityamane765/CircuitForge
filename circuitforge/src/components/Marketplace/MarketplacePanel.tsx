@@ -30,6 +30,13 @@ const MarketplacePanel: React.FC<MarketplacePanelProps> = ({
   const [publishing, setPublishing] = useState(false);
   const [publishedHash, setPublishedHash] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [copiedHash, setCopiedHash] = useState(false);
+
+  const copyHash = (hash: string) => {
+    navigator.clipboard.writeText(hash);
+    setCopiedHash(true);
+    setTimeout(() => setCopiedHash(false), 2000);
+  };
 
   // Browse state
   const [ipfsHash, setIpfsHash] = useState('');
@@ -181,7 +188,16 @@ const MarketplacePanel: React.FC<MarketplacePanelProps> = ({
           <div className="mt-2 rounded p-2" style={{ backgroundColor: `${theme.green}15`, border: `1px solid ${theme.green}50` }}>
             <p className="text-xs font-medium" style={{ color: theme.green }}>Published successfully!</p>
             <p className="mt-1 text-xs" style={{ color: theme.textMuted }}>IPFS Hash:</p>
-            <p className="break-all text-xs font-mono" style={{ color: theme.textAccent }}>{publishedHash}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="break-all text-xs font-mono flex-1" style={{ color: theme.textAccent }}>{publishedHash}</p>
+              <button
+                onClick={() => copyHash(publishedHash)}
+                className="px-2 py-1 rounded text-xs flex-shrink-0"
+                style={{ backgroundColor: theme.btnBg, color: copiedHash ? theme.green : theme.btnText }}
+              >
+                {copiedHash ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
             <a
               href={`https://gateway.pinata.cloud/ipfs/${publishedHash}`}
               target="_blank"
