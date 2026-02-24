@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { connect, disconnect, StarknetWindowObject } from 'get-starknet';
-import { WalletAccount, RpcProvider, CallData, hash as starkHash } from 'starknet';
+import { WalletAccount, RpcProvider, CallData, hash as starkHash, num } from 'starknet';
 import { useTheme } from '@/context/ThemeContext';
 
 interface DeployPanelProps {
@@ -29,7 +29,15 @@ const DeployPanel: React.FC<DeployPanelProps> = ({ cairoCode }) => {
   const [wallet, setWallet] = useState<StarknetWindowObject | null>(null);
   const [status, setStatus] = useState<DeployStatus>('idle');
   const [contractAddress, setContractAddress] = useState<string | null>(null);
+  const [deployTxHash, setDeployTxHash] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [copied, setCopied] = useState<'address' | 'tx' | null>(null);
+
+  const copyToClipboard = (text: string, type: 'address' | 'tx') => {
+    navigator.clipboard.writeText(text);
+    setCopied(type);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   const [steps, setSteps] = useState<Step[]>([
     { id: 'compile', name: 'Compile Cairo Code', status: 'pending' },
@@ -102,6 +110,7 @@ const DeployPanel: React.FC<DeployPanelProps> = ({ cairoCode }) => {
     }
 
     setContractAddress(null);
+    setDeployTxHash(null);
     setErrorMessage(null);
     // Reset only compile/declare/deploy steps, keep connect status
     setSteps((prev) => prev.map(step =>
@@ -160,29 +169,34 @@ const DeployPanel: React.FC<DeployPanelProps> = ({ cairoCode }) => {
         }),
       });
 
+      setDeployTxHash(deployResult.transaction_hash);
       updateStepStatus('deploy', 'in-progress', `Waiting for deploy tx confirmation...`);
       const rpcProvider = new RpcProvider({ nodeUrl: SEPOLIA_RPC_URL });
       const receipt = await rpcProvider.waitForTransaction(deployResult.transaction_hash, { retryInterval: 2000 });
 
-      // Extract deployed contract address from events
+      // Extract deployed contract address from UDC ContractDeployed event
+      // Normalize both addresses with num.toHex to avoid zero-padding mismatches
       let deployedAddress: string | null = null;
       if (receipt && 'events' in receipt && Array.isArray(receipt.events)) {
-        // UDC emits ContractDeployed event with address as first data element
+        const udcNorm = num.toHex(UDC_ADDRESS);
         for (const event of receipt.events) {
-          if (event.from_address?.toLowerCase() === UDC_ADDRESS.toLowerCase()) {
-            deployedAddress = event.data?.[0] || null;
+          if (num.toHex(event.from_address) === udcNorm && event.data?.[0]) {
+            deployedAddress = num.toHex(event.data[0]);
             break;
           }
         }
       }
 
+      // Deterministic fallback: compute address from classHash + salt + deployer
       if (!deployedAddress) {
-        // Fallback: compute expected address
-        deployedAddress = deployResult.transaction_hash;
-        updateStepStatus('deploy', 'done', 'Contract deployed (check tx on explorer).');
-      } else {
-        updateStepStatus('deploy', 'done', 'Contract instance deployed.');
+        const deployerAddress = account.address;
+        const udcSalt = starkHash.computeHashOnElements([num.toBigInt(deployerAddress), num.toBigInt(salt)]);
+        deployedAddress = num.toHex(
+          starkHash.calculateContractAddressFromHash(udcSalt, classHash, [], UDC_ADDRESS)
+        );
       }
+
+      updateStepStatus('deploy', 'done', 'Contract instance deployed.');
 
       setContractAddress(deployedAddress);
       setStatus('deployed');
@@ -264,18 +278,57 @@ const DeployPanel: React.FC<DeployPanelProps> = ({ cairoCode }) => {
         </div>
       )}
 
-      {contractAddress && (
-        <div className="p-3 mb-4 rounded-md border text-sm" style={{ backgroundColor: `${theme.green}15`, borderColor: `${theme.green}50`, color: theme.green }}>
-          <p className="font-semibold">Contract Deployed!</p>
-          <a
-            href={`https://sepolia.starkscan.co/contract/${contractAddress}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline break-all"
-            style={{ color: theme.textAccent }}
-          >
-            {contractAddress}
-          </a>
+      {(contractAddress || deployTxHash) && (
+        <div className="p-3 mb-4 rounded-md border text-sm space-y-3" style={{ backgroundColor: `${theme.green}15`, borderColor: `${theme.green}50` }}>
+          <p className="font-semibold" style={{ color: theme.green }}>Contract Deployed!</p>
+
+          {deployTxHash && (
+            <div>
+              <p className="text-xs mb-1" style={{ color: theme.textMuted }}>Transaction Hash</p>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://sepolia.voyager.online/tx/${deployTxHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline break-all flex-1"
+                  style={{ color: theme.textAccent }}
+                >
+                  {deployTxHash.slice(0, 12)}...{deployTxHash.slice(-8)}
+                </a>
+                <button
+                  onClick={() => copyToClipboard(deployTxHash, 'tx')}
+                  className="px-2 py-1 rounded text-xs flex-shrink-0"
+                  style={{ backgroundColor: theme.btnBg, color: copied === 'tx' ? theme.green : theme.btnText }}
+                >
+                  {copied === 'tx' ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {contractAddress && (
+            <div>
+              <p className="text-xs mb-1" style={{ color: theme.textMuted }}>Contract Address</p>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://sepolia.voyager.online/contract/${contractAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline break-all flex-1"
+                  style={{ color: theme.textAccent }}
+                >
+                  {contractAddress.slice(0, 12)}...{contractAddress.slice(-8)}
+                </a>
+                <button
+                  onClick={() => copyToClipboard(contractAddress, 'address')}
+                  className="px-2 py-1 rounded text-xs flex-shrink-0"
+                  style={{ backgroundColor: theme.btnBg, color: copied === 'address' ? theme.green : theme.btnText }}
+                >
+                  {copied === 'address' ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
