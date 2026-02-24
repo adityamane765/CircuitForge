@@ -47,10 +47,9 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Copy Scarb binary + pre-warmed registry cache from builder
-COPY --from=builder /root/.local/bin/scarb /root/.local/bin/scarb
-COPY --from=builder /root/.local/share/scarb /root/.local/share/scarb
-COPY --from=builder /root/.local/share/scarb-install /root/.local/share/scarb-install
+# Copy Scarb binary + pre-warmed registry/crate cache from builder
+COPY --from=builder /root/.local /root/.local
+COPY --from=builder /root/.cache /root/.cache
 
 # Copy built output from builder
 COPY --from=builder /app/.next/standalone ./
