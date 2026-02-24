@@ -22,6 +22,12 @@ sierra = true
 casm = true
 `;
 
+// Augmented PATH so execSync can find scarb regardless of shell environment
+const SCARB_ENV = {
+  ...process.env,
+  PATH: `/root/.local/bin:${process.env.PATH ?? ''}`,
+};
+
 function findScarb(): string {
   // Check common install locations since Next.js server may not inherit shell PATH
   const candidates = [
@@ -35,7 +41,7 @@ function findScarb(): string {
 
   for (const candidate of candidates) {
     try {
-      execSync(`${candidate} --version`, { stdio: 'pipe' });
+      execSync(`${candidate} --version`, { stdio: 'pipe', env: SCARB_ENV });
       return candidate;
     } catch {
       // try next
@@ -50,7 +56,13 @@ function findScarb(): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { cairoCode } = await req.json();
+  let cairoCode: string;
+  try {
+    ({ cairoCode } = await req.json());
+  } catch {
+    return NextResponse.json({ success: false, errors: ['Invalid request body'] }, { status: 400 });
+  }
+
   const tmpDir = join('/tmp', `circuit-${randomUUID()}`);
 
   try {
@@ -62,8 +74,8 @@ export async function POST(req: NextRequest) {
     await writeFile(join(tmpDir, 'Scarb.toml'), SCARB_TOML_TEMPLATE);
     await writeFile(join(tmpDir, 'src', 'lib.cairo'), cairoCode);
 
-    // 2. Compile
-    execSync(`${scarbBin} build`, { cwd: tmpDir, timeout: 60000 });
+    // 2. Compile (120s timeout — first run downloads starknet crate)
+    execSync(`${scarbBin} build`, { cwd: tmpDir, timeout: 120000, maxBuffer: 10 * 1024 * 1024, env: SCARB_ENV });
 
     // 3. Read artifacts — find files by extension since name may vary
     const targetDir = join(tmpDir, 'target', 'dev');
