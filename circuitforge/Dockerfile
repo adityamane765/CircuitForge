@@ -20,11 +20,12 @@ RUN /root/.local/bin/scarb --version
 # Pre-warm Scarb registry cache by compiling a dummy starknet contract.
 # This bakes the downloaded crates into the image so runtime compilations
 # don't re-download and blow past the 512MB RAM limit.
-RUN mkdir -p /scarb-warmup/src && \
-    printf '[package]\nname = "warmup"\nversion = "0.1.0"\nedition = "2024_07"\n\n[dependencies]\nstarknet = "2.9.2"\n\n[[target.starknet-contract]]\nsierra = true\ncasm = true\n' > /scarb-warmup/Scarb.toml && \
-    printf '#[starknet::contract]\nmod warmup {\n    #[storage]\n    struct Storage {}\n}\n' > /scarb-warmup/src/lib.cairo && \
-    cd /scarb-warmup && /root/.local/bin/scarb build && \
-    rm -rf /scarb-warmup
+WORKDIR /scarb-warmup
+RUN mkdir -p src
+COPY warmup/Scarb.toml ./Scarb.toml
+COPY warmup/src/lib.cairo ./src/lib.cairo
+RUN /root/.local/bin/scarb build
+RUN rm -rf /scarb-warmup
 
 WORKDIR /app
 
