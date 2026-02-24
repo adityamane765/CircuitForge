@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: circuitforge
+    runtime: docker
+    dockerfilePath: ./circuitforge/Dockerfile
+    dockerContext: ./circuitforge
+    envVars:
+      - key: STARKNET_DEPLOYER_PRIVATE_KEY
+        sync: false
+      - key: STARKNET_DEPLOYER_ADDRESS
+        sync: false
+    healthCheckPath: /
+    autoDeploy: true
