@@ -1,64 +1,42 @@
-# Stage 1: Build
-FROM node:20-slim AS builder
+FROM node:20-slim
 
-# Install system deps for Scarb installation
+# Install system deps
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Scarb (Cairo package manager / compiler)
+# Install Scarb
 RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.9.2
 
-# Add Scarb to PATH (install script puts it at /root/.local/bin/scarb)
 ENV PATH="/root/.local/bin:${PATH}"
+ENV HOME="/root"
 
-# Verify Scarb is available
+# Verify Scarb
 RUN /root/.local/bin/scarb --version
 
-# Pre-warm Scarb registry cache by compiling a dummy starknet contract.
-# This bakes the downloaded crates into the image so runtime compilations
-# don't re-download and blow past the 512MB RAM limit.
+# Pre-warm Scarb cache by compiling a dummy contract at build time
+# so runtime never needs to download anything
 WORKDIR /scarb-warmup
-RUN mkdir -p src
 COPY warmup/Scarb.toml ./Scarb.toml
 COPY warmup/src/lib.cairo ./src/lib.cairo
-RUN /root/.local/bin/scarb build
-RUN rm -rf /scarb-warmup
+RUN HOME=/root /root/.local/bin/scarb build
 
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy the rest of the source
-COPY . .
-
 # Build Next.js app
+COPY . .
 RUN npm run build
 
-# Stage 2: Production runtime
-FROM node:20-slim AS runner
-
-ENV PATH="/root/.local/bin:${PATH}"
 ENV NODE_ENV=production
-
-WORKDIR /app
-
-# Copy Scarb binary + pre-warmed registry/crate cache from builder
-COPY --from=builder /root/.local /root/.local
-COPY --from=builder /root/.cache /root/.cache
-
-# Copy built output from builder
-COPY --from=builder /app/.next/standalone ./
-RUN mkdir -p ./public
-COPY --from=builder /app/.next/static ./.next/static
-
-EXPOSE 3000
-
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+EXPOSE 3000
+
+CMD ["node", ".next/standalone/server.js"]
