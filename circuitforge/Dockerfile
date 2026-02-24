@@ -11,11 +11,11 @@ RUN apt-get update && apt-get install -y \
 # Install Scarb (Cairo package manager / compiler)
 RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.9.2
 
-# Add Scarb to PATH
-ENV PATH="/root/.local/share/scarb/bin:${PATH}"
+# Add Scarb to PATH (install script puts it at /root/.local/bin/scarb)
+ENV PATH="/root/.local/bin:${PATH}"
 
 # Verify Scarb is available
-RUN scarb --version
+RUN /root/.local/bin/scarb --version
 
 WORKDIR /app
 
@@ -41,7 +41,7 @@ RUN apt-get update && apt-get install -y \
 # Install Scarb in runtime image too
 RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v 2.9.2
 
-ENV PATH="/root/.local/share/scarb/bin:${PATH}"
+ENV PATH="/root/.local/bin:${PATH}"
 ENV NODE_ENV=production
 
 WORKDIR /app
