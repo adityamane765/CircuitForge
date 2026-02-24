@@ -443,17 +443,17 @@ const CircuitEditor: React.FC = () => {
               ))}
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
-              {activeTab === 'test' && <TestPanel ast={ast} />}
-              {activeTab === 'ai' && <ChatPanel />}
-              {activeTab === 'deploy' && <DeployPanel cairoCode={cairoCode} />}
-              {activeTab === 'share' && (
+              <div className={activeTab === 'test' ? 'h-full' : 'hidden'}><TestPanel ast={ast} /></div>
+              <div className={activeTab === 'ai' ? 'h-full' : 'hidden'}><ChatPanel /></div>
+              <div className={activeTab === 'deploy' ? 'h-full' : 'hidden'}><DeployPanel cairoCode={cairoCode} /></div>
+              <div className={activeTab === 'share' ? 'h-full' : 'hidden'}>
                 <MarketplacePanel
                   cairoCode={cairoCode}
                   workspaceJson={getWorkspaceJson()}
                   onLoadCircuit={handleLoadFromMarketplace}
                 />
-              )}
-              {activeTab === 'visualize' && <CircuitDAG ast={ast} />}
+              </div>
+              <div className={activeTab === 'visualize' ? 'h-full' : 'hidden'}><CircuitDAG ast={ast} /></div>
             </div>
           </div>
         </div>
