@@ -2,14 +2,9 @@
 
 # CircuitForge
 
-**Visual ZK Circuit Builder for Starknet**
+**Visual ZK Circuit Builder for Cairo**
 
 *Drag. Connect. Prove. Deploy.*
-
-[![Built for Re{define} Hackathon](https://img.shields.io/badge/Re%7Bdefine%7D-Privacy%20Track-8b5cf6?style=for-the-badge)](https://redefined.xyz)
-[![Starknet](https://img.shields.io/badge/Starknet-Sepolia-ec4899?style=for-the-badge)](https://starknet.io)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![Cairo](https://img.shields.io/badge/Cairo-2.9.2-f97316?style=for-the-badge)](https://cairo-lang.org)
 
 </div>
 
@@ -17,7 +12,9 @@
 
 ## What is CircuitForge?
 
-CircuitForge is a **no-code ZK circuit IDE** that lets you build zero-knowledge proof circuits visually — no Cairo expertise required. Drag blocks onto a canvas, snap them together, and instantly see valid Cairo code generated in real time. Then compile, declare, and deploy to Starknet Sepolia in one click.
+CircuitForge is a **no-code ZK circuit IDE** that lets you build ZK proof circuits visually with no Cairo expertise required. Drag blocks onto a canvas, snap them together, and instantly see valid Cairo code generated in real time. Then compile, declare, and deploy to Starknet Sepolia in one click.
+
+My original inspiration for this was Scratch from MIT (https://scratch.mit.edu/) - Scratch was my first introduction to programming (from the famous lecture series Cs50x. When i was learning ZK systems, i thought of making it as simple as possible and gave a shot to design this visual editor, open to any feedback.
 
 ---
 
