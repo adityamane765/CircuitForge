@@ -1,209 +1,64 @@
-<div align="center">
-
 # CircuitForge
 
-**Visual ZK Circuit Builder for Cairo**
+CircuitForge is a visual editor for building Cairo constraint programs from typed blocks. Connect inputs, operations, hashes, and constraints on the canvas, then inspect the generated Cairo and test the graph in the browser.
 
-*Drag. Connect. Prove. Deploy.*
+Use the [developer guide](https://circuit-forge.vercel.app/developers) for the product walkthrough, block reference, workflows, troubleshooting, and current limitations.
 
-</div>
+## What you can do
 
----
+- Start with an empty canvas, a built-in template, a browser save, or an IPFS circuit.
+- Build with 19 typed blocks across inputs, arithmetic, hashing, logic, constraints, and outputs.
+- Inspect generated Cairo as the graph changes.
+- Enter circuit inputs and run constraint tests locally.
+- Export a `.cairo` file or a complete Scarb project.
+- Compile, declare, and deploy generated contracts to Starknet Sepolia.
+- Review the current code with Claude, ChatGPT, or Gemini using your own API key.
+- Publish circuits through Pinata and share them by CID.
 
-## What is CircuitForge?
+## Run locally
 
-CircuitForge is a **no-code ZK circuit IDE** that lets you build ZK proof circuits visually with no Cairo expertise required. Drag blocks onto a canvas, snap them together, and instantly see valid Cairo code generated in real time. Then compile, declare, and deploy to Starknet Sepolia in one click.
+Requirements:
 
-My original inspiration for this was Scratch from MIT (https://scratch.mit.edu/) - Scratch was my first introduction to programming (from the famous lecture series Cs50x. When i was learning ZK systems, i thought of making it as simple as possible and gave a shot to design this visual editor, open to any feedback.
-
----
-
-## Features
-
-### Visual Circuit Editor
-- **18 drag-and-drop blocks** across 6 categories — Inputs, Arithmetic, Hashing, Logic, Constraints, Outputs
-- **Live Cairo preview** — Monaco editor updates as you build
-- **Real-time validation** with inline error highlighting
-- **Resizable split panel** — adjust workspace/code ratio
-
-### Testing & Gas Estimation
-- **Test Panel** — run your circuit with custom inputs and see pass/fail per constraint
-- **Gas Estimator** — estimates step cost by block type (Poseidon: 500, Pedersen: 4000, arithmetic: 20–40 steps)
-
-### Circuit Visualization
-- **Dataflow DAG** — interactive graph showing how values flow between blocks
-- Auto-layout with node positioning
-
-### AI Assistant
-- **Multi-provider chat** — Claude, ChatGPT, or Gemini
-- Context-aware: the AI knows your available blocks and circuit patterns
-- Chat state persists across tab switches
-
-### Compile & Deploy
-- **One-click compilation** via Nethermind's hosted Cairo compiler API (no local toolchain needed)
-- **Wallet connect** via get-starknet (Argent, Braavos, etc.)
-- **Declare + Deploy** to Starknet Sepolia with tx hash and contract address
-- **Voyager links** for every transaction
-
-### IPFS Marketplace
-- **Publish circuits** to IPFS via Pinata
-- **Browse by hash** — share circuits with a single CID
-- Copy hash to clipboard
-
-### Save, Load & Export
-- **localStorage persistence** — your circuit is saved automatically
-- **Export `.cairo`** — download generated source file
-- **Export Scarb project** — full `.zip` with `Scarb.toml` for local development
-
-### Pre-built templates
-- Right now, we have 4 simple templates which users can load on one click to help users understand the setup.
-
-| Template | Category | Description |
-|---|---|---|
-| Hash Preimage Proof | Privacy | Prove knowledge of secret whose hash matches public value |
-| Arithmetic Factoring | Arithmetic | Prove two private factors of a public product |
-| Age Verification | Privacy | Prove age threshold without revealing exact age |
-| Merkle Proof (2-level) | Privacy | Prove leaf inclusion in a Merkle tree |
-
-### Themes
-4 editor themes: **Midnight**, **Monokai**, **Solarized**, **Light** — each with coordinated Blockly block colors and Monaco syntax highlighting.
-
-### Onboarding
-- Interactive **guided tour** walks new users through every part of the editor
-
----
-
-## Block Reference
-
-| Category | Blocks |
-|---|---|
-| **Inputs** | Private Input, Public Input, Constant |
-| **Arithmetic** | Add, Subtract, Multiply, Divide, Modulo |
-| **Hashing** | Poseidon Hash, Pedersen Hash |
-| **Logic** | Bitwise AND, OR, XOR, NOT |
-| **Constraints** | Assert Equal, Assert Range, Assert Not Zero, Assert Greater Than |
-| **Output** | Public Output |
-
----
-
-## Tech Stack
-
-| Layer | Tech |
-|---|---|
-| Framework | Next.js 16 (App Router, Turbopack) |
-| Language | TypeScript 5, Cairo 2.9.2 |
-| Visual Editor | Blockly.js v12 |
-| Code Editor | Monaco Editor (`@monaco-editor/react`) |
-| Styling | Tailwind CSS v4 |
-| Blockchain | Starknet.js v9, get-starknet v4 |
-| AI | Anthropic SDK, OpenAI SDK, Google Generative AI |
-| Storage | Pinata (IPFS), localStorage |
-| Compiler | Nethermind Remix API (hosted, free) |
-| Export | JSZip |
-
----
-
-## Architecture
-
-```
-circuitforge/src/
-├── app/
-│   ├── page.tsx                   # Landing page
-│   ├── editor/page.tsx            # Main editor
-│   └── api/
-│       ├── chat/route.ts          # AI multi-provider proxy
-│       ├── compile/route.ts       # Cairo compiler (Nethermind API)
-│       └── pinata/route.ts        # IPFS publish/fetch
-├── components/
-│   ├── CircuitEditor.tsx          # Main orchestrator
-│   ├── BlocklyEditor/             # Canvas, toolbox, block definitions
-│   ├── CodePreview/               # Monaco Cairo editor
-│   ├── TestPanel/                 # Circuit test runner
-│   ├── AIAssistant/               # Chat panel
-│   ├── DeployPanel/               # Wallet + deploy flow
-│   ├── Marketplace/               # IPFS circuit sharing
-│   ├── CircuitVisualization/      # Dataflow DAG
-│   ├── TemplateGallery/           # Pre-built templates
-│   ├── Landing/                   # Homepage
-│   └── Onboarding/                # Guided tour
-├── transpiler/
-│   ├── types.ts                   # AST node interfaces
-│   ├── parser.ts                  # Blockly → AST
-│   ├── validator.ts               # AST validation
-│   └── generator.ts               # AST → Cairo code
-├── context/ThemeContext.tsx        # Global theme state
-├── lib/
-│   ├── gasEstimator.ts            # Step cost calculator
-│   └── scarbExporter.ts           # ZIP project builder
-└── templates/                     # Pre-built circuit JSON files
-```
-
-### Transpiler Pipeline
-
-```
-Blockly Workspace
-      │
-      ▼
-   Parser          (Blockly blocks → CircuitAST)
-      │
-      ▼
-  Validator        (type checks, missing connections)
-      │
-      ▼
-  Generator        (AST → Cairo source code)
-      │
-      ▼
-  Cairo Code       (displayed in Monaco, ready to compile)
-```
-
----
-
-## User Workflow
-
-```
-1. Design    →  Drag blocks, build circuit visually
-2. Test      →  Fill inputs, verify constraints pass
-3. Visualize →  See the dataflow graph
-4. Chat      →  Ask AI for suggestions
-5. Compile   →  Generate Sierra + CASM artifacts
-6. Deploy    →  Connect wallet → Declare → Deploy to Sepolia
-7. Share     →  Publish to IPFS, copy hash
-8. Export    →  Download .cairo or full Scarb project
-```
-
----
-
-## Environment Variables
-
-- Create an .env.local file using template from .env.example and update the keys in it
-- AI provider keys are entered by the user in-app and never stored server-side.
----
-
-### Local Development
+- Node.js 20 or later
+- npm
 
 ```bash
-git clone https://github.com/your-username/CircuitForge
+git clone https://github.com/adityamane765/CircuitForge.git
 cd CircuitForge/circuitforge
 npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-Create `.env.local`:
+Open [http://localhost:3000](http://localhost:3000).
+
+## Environment variables
+
+The editor works locally without a wallet or deployer account. Contract declaration requires a funded Starknet Sepolia deployer:
+
 ```env
 STARKNET_DEPLOYER_PRIVATE_KEY=0x...
 STARKNET_DEPLOYER_ADDRESS=0x...
 ```
 
-```bash
-npm run dev
-```
+AI and Pinata credentials are entered in the application when those features are used.
 
-Open [http://localhost:3000](http://localhost:3000)
-
-### Production Build
+## Useful commands
 
 ```bash
-npm run build
-npm start
+npm run dev      # Start the development server
+npm test         # Run the test suite
+npm run lint     # Run ESLint
+npm run build    # Create a production build
 ```
 
----
+## Current boundaries
+
+- The built-in deployment flow targets Starknet Sepolia.
+- Hosted compilation and class declaration require internet access.
+- Browser saves remain in the current browser profile.
+- Private inputs are tested locally, but generated contracts currently emit zero placeholders for them. Connect a proving or witness system in the exported project.
+- Public Output blocks are emitted as comments rather than contract return values. Add the intended ABI behavior in the exported project.
+- AI suggestions are not a cryptographic or security audit.
+
+See the [developer guide](https://circuit-forge.vercel.app/developers#limitations) for details.
