@@ -6,7 +6,7 @@ import Link from 'next/link';
 const features = [
   {
     title: 'VISUAL CIRCUIT BUILDER',
-    desc: 'Drag-and-drop blocks to design ZK circuits. 16 block types for inputs, arithmetic, hashing, logic, constraints, and outputs. Snap them together like puzzle pieces to build complex proof systems without writing a single line of code.',
+    desc: 'Drag-and-drop blocks to design ZK circuits. 19 block types for inputs, arithmetic, hashing, logic, constraints, and outputs. Snap them together like puzzle pieces to build complex proof systems without writing a single line of code.',
   },
   {
     title: 'LIVE CAIRO GENERATION',
@@ -275,6 +275,7 @@ const LandingPage: React.FC = () => {
 
       {/* ───── Navbar ───── */}
       <nav
+        className="landing-nav"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -299,34 +300,56 @@ const LandingPage: React.FC = () => {
         >
           CircuitForge
         </span>
-        <Link
-          href="/editor"
-          style={{
-            backgroundColor: 'rgba(0, 240, 255, 0.1)',
-            color: '#00f0ff',
-            padding: '8px 24px',
-            borderRadius: 6,
-            fontSize: 13,
-            fontWeight: 600,
-            textDecoration: 'none',
-            border: '1px solid rgba(0, 240, 255, 0.3)',
-            fontFamily: 'var(--font-geist-mono), monospace',
-            transition: 'all 0.2s',
-            letterSpacing: '0.5px',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.backgroundColor = 'rgba(0, 240, 255, 0.2)';
-            e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.15)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.backgroundColor = 'rgba(0, 240, 255, 0.1)';
-            e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          Launch Editor →
-        </Link>
+        <div className="landing-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <Link
+            href="/developers"
+            className="landing-developers-link"
+            style={{
+              color: '#77778f',
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: 'none',
+              fontFamily: 'var(--font-geist-mono), monospace',
+              letterSpacing: '0.3px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#e0e0ff'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#77778f'; }}
+          >
+            <span className="landing-desktop-label">Developers</span>
+            <span className="landing-mobile-label">Docs</span>
+          </Link>
+          <Link
+            href="/editor"
+            style={{
+              backgroundColor: 'rgba(0, 240, 255, 0.1)',
+              color: '#00f0ff',
+              padding: '8px 18px',
+              borderRadius: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              textDecoration: 'none',
+              border: '1px solid rgba(0, 240, 255, 0.3)',
+              fontFamily: 'var(--font-geist-mono), monospace',
+              transition: 'all 0.2s',
+              letterSpacing: '0.5px',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 240, 255, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.15)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 240, 255, 0.1)';
+              e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <span className="landing-desktop-label">Launch Editor →</span>
+            <span className="landing-mobile-label">Editor</span>
+          </Link>
+        </div>
       </nav>
 
       {/* ───── Centerpiece: Animated Transpilation ───── */}
@@ -723,7 +746,7 @@ const LandingPage: React.FC = () => {
             fontFamily: 'var(--font-geist-mono), monospace',
           }}
         >
-          CircuitForge — Visual ZK Circuit Builder for Starknet
+          CircuitForge — Visual ZK Circuit Builder in Cairo
         </p>
         <p
           style={{

@@ -107,3 +107,40 @@ body {
   animation-fill-mode: forwards;
   width: 0;
 }
+
+@media (max-width: 520px) {
+  .landing-nav {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .landing-nav-actions {
+    gap: 12px !important;
+  }
+
+  .landing-developers-link {
+    font-size: 11px !important;
+  }
+
+  .landing-nav > span:first-child {
+    font-size: 15px !important;
+  }
+
+  .landing-nav-actions a:last-child {
+    padding: 7px 12px !important;
+  }
+}
+
+.landing-mobile-label {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .landing-desktop-label {
+    display: none;
+  }
+
+  .landing-mobile-label {
+    display: inline;
+  }
+}
